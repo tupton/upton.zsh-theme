@@ -25,8 +25,7 @@ function prompt_char {
 # %#               - % if user, # if root
 
 function user_name {
-	[[ "$SSH_CONNECTION" != '' ]] && echo '%{%F{yellow}%}%n%{%F{gray}%}@%{%F{blue}%}%m ' && return
-    echo ''
+	[[ "$SSH_CONNECTION" != '' ]] && echo '%{%F{yellow}%}%n%{%F{gray}%}@%{%F{blue}%}%m ' || echo ''
 }
 
 setopt prompt_subst
