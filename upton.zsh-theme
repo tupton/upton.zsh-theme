@@ -5,8 +5,7 @@
 # http://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/
 
 function prompt_char {
-    git branch >/dev/null 2>&1 && echo '±' && return
-    echo '○'
+    git rev-parse --is-inside-work-tree > /dev/null 2>&1 && echo '±' || echo '○'
 }
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{%F{cyan}%}"
