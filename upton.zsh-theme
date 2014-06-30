@@ -35,7 +35,7 @@ zstyle ':vcs_info:git*' unstagedstr '%F{red}*%f'
 zstyle ':vcs_info:git*' actionformats '%F{cyan}%b%f|%F{yellow}%a%f '
 zstyle ':vcs_info:git*' formats '%F{cyan}%b%f %c%u%m '
 zstyle ':vcs_info:git*' check-for-changes true
-zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-tagname
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-remotebranch git-tagname
 zstyle ':vcs_info:*' enable git
 
 function +vi-git-untracked() {
@@ -67,6 +67,22 @@ function +vi-git-tagname() {
 
     tag=$(git describe --tags --exact-match HEAD 2>/dev/null)
     [[ -n ${tag} ]] && hook_com[branch]=${tag}
+}
+
+function +vi-git-remotebranch() {
+    local remote branch_name
+
+    # Are we on a remote-tracking branch?
+    remote=${$(git rev-parse --verify HEAD@{upstream} --symbolic-full-name 2>/dev/null)/refs\/(remotes|heads)\/}
+    branch_name=${$(git symbolic-ref --short HEAD 2>/dev/null)}
+
+    # The first test will show a tracking branch whenever there is one. The
+    # second test, however, will only show the remote branch's name if it
+    # differs from the local one.
+    #if [[ -n ${remote} ]] ; then
+    if [[ -n ${remote} && ${remote#*/} != ${branch_name} ]] ; then
+        hook_com[branch]="${hook_com[branch]}%f→%B%F{cyan}${remote}%f%b"
+    fi
 }
 
 precmd() { vcs_info }
