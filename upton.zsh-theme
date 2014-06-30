@@ -4,36 +4,31 @@
 # https://github.com/blinks zsh theme
 # http://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/
 
-function prompt_char() {
-    git rev-parse --is-inside-work-tree > /dev/null 2>&1 && echo '±' || echo '○'
-}
-
 # %                - the escape character
-# %{%f%k%b%}       - resets coloring/bolding
-# %{$reset_color%} - resets coloring/bolding
-# %{%F{COLOR}%}    - sets a color
-# %{%B%F{COLOR}%}  - sets a bold color (solarized uses some of these for grays)
+# %f%k%b           - resets coloring/bolding
+# %F{COLOR}        - sets a color
+# %B%F{COLOR}      - sets a bold color (solarized uses some of these for grays)
 
 # %n               - user
 # @                - literal @
 # %m               - short hostname
 # %~               - path (truncated when in home dir)
-# git_prompt_info  - branch/status of the current git repo
-# hg_prompt_info   - branch/status of the current mercurial repo
-# prompt_char      - if you are in a git/hg repo
 # %E               - clear till end of line
-# %#               - % if user, # if root
 
 function user_name() {
-	[[ "$SSH_CONNECTION" != '' ]] && echo '%{%F{yellow}%}%n%{%F{gray}%}@%{%F{blue}%}%m ' || echo ''
+	[[ -n "$SSH_CONNECTION" ]] && echo "%F{yellow}%n%f%F{gray}@%f%F{blue}%m%f " || echo ""
+}
+
+function prompt_char() {
+    git rev-parse --is-inside-work-tree > /dev/null 2>&1 && echo "%F{cyan}±%f" || echo "%F{yellow}○%f"
 }
 
 setopt prompt_subst
 autoload -Uz vcs_info
-zstyle ':vcs_info:git*' stagedstr '%F{green}+%f'
-zstyle ':vcs_info:git*' unstagedstr '%F{red}*%f'
-zstyle ':vcs_info:git*' actionformats '%F{cyan}%b%f|%F{yellow}%a%f '
-zstyle ':vcs_info:git*' formats '%F{cyan}%b%f %c%u%m '
+zstyle ':vcs_info:git*' stagedstr "%F{green}+%f"
+zstyle ':vcs_info:git*' unstagedstr "%F{red}*%f"
+zstyle ':vcs_info:git*' actionformats "%b|%a "
+zstyle ':vcs_info:git*' formats "%b %c%u%m "
 zstyle ':vcs_info:git*' check-for-changes true
 zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-remotebranch git-tagname
 zstyle ':vcs_info:*' enable git
@@ -41,7 +36,7 @@ zstyle ':vcs_info:*' enable git
 function +vi-git-untracked() {
     if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' && \
             $(git ls-files --others --exclude-standard | sed q | wc -l | tr -d ' ') != 0 ]]; then
-        hook_com[unstaged]+='%{%F{yellow}%}?%{%f%}'
+        hook_com[unstaged]+="%F{yellow}?%f"
     fi
 }
 
@@ -63,13 +58,6 @@ function +vi-git-aheadbehind() {
     hook_com[misc]+=${(j::)gitstatus}
 }
 
-function +vi-git-tagname() {
-    local tag
-
-    tag=$(git describe --tags --exact-match HEAD 2>/dev/null)
-    [[ -n ${tag} ]] && hook_com[branch]=${tag}
-}
-
 function +vi-git-remotebranch() {
     local remote branch_name
 
@@ -81,17 +69,20 @@ function +vi-git-remotebranch() {
     # second test, however, will only show the remote branch's name if it
     # differs from the local one.
     #if [[ -n ${remote} ]] ; then
+    hook_com[branch]="%F{cyan}${hook_com[branch]}%f"
     if [[ -n ${remote} && ${remote#*/} != ${branch_name} ]] ; then
-        hook_com[branch]="${hook_com[branch]}%f→%B%F{cyan}${remote}%f%b"
+        hook_com[branch]+="→%B%F{cyan}${remote}%f%b"
     fi
+}
+
+function +vi-git-tagname() {
+    local tag
+
+    tag=$(git describe --tags --exact-match HEAD 2>/dev/null)
+    [[ -n ${tag} ]] && hook_com[branch]=${tag}
 }
 
 precmd() { vcs_info }
 
-PROMPT='%{%F{cyan}%}$(prompt_char)%{$reset_color%} \
-$(user_name)%{$reset_color%}\
-%{%B%F{green}%}${PWD/#$HOME/~}%{$reset_color%} \
-${vcs_info_msg_0_}%{$reset_color%}%E
-%(?.%F{blue}.%F{red})❯%{$reset_color%} '
-
-#RPROMPT='%{%F{gray}%}!%h%{$reset_color%} %{%F{yellow}%}%T%{$reset_color%}'
+PROMPT='$(prompt_char) $(user_name)%f%B%F{green}${PWD/#$HOME/~}%f%b ${vcs_info_msg_0_}%E
+%(?.%F{blue}.%F{red})❯%f '
