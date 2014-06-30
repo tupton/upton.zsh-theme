@@ -65,7 +65,7 @@ function +vi-git-aheadbehind() {
 function +vi-git-tagname() {
     local tag
 
-    tag=$(git describe --tags --contains --exact-match HEAD 2>/dev/null)
+    tag=$(git describe --tags --exact-match HEAD 2>/dev/null)
     [[ -n "$tag" ]] && hook_com[branch]=${tag}
 }
 
