@@ -46,17 +46,18 @@ function +vi-git-untracked() {
 }
 
 function +vi-git-aheadbehind() {
-    local ahead behind
+    local ahead behind branch_name
     local -a gitstatus
 
+    branch_name=${$(git symbolic-ref --short HEAD 2>/dev/null)}
     # for git prior to 1.7
-    # ahead=$(git rev-list origin/${hook_com[branch]}..HEAD | wc -l)
-    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l | tr -d ' ')
+    # ahead=$(git rev-list origin/${branch_name}..HEAD | wc -l)
+    ahead=$(git rev-list ${branch_name}@{upstream}..HEAD 2>/dev/null | wc -l | tr -d ' ')
     (( $ahead )) && gitstatus+=( "%B%F{magenta}↑${ahead}%f%b" )
 
     # for git prior to 1.7
-    # behind=$(git rev-list HEAD..origin/${hook_com[branch]} | wc -l)
-    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l | tr -d ' ')
+    # behind=$(git rev-list HEAD..origin/${branch_name} | wc -l)
+    behind=$(git rev-list HEAD..${branch_name}@{upstream} 2>/dev/null | wc -l | tr -d ' ')
     (( $behind )) && gitstatus+=( "%F{magenta}↓${behind}%f" )
 
     hook_com[misc]+=${(j::)gitstatus}
