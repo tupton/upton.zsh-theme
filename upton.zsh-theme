@@ -40,7 +40,7 @@ zstyle ':vcs_info:*' enable git
 
 +vi-git-untracked() {
     if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' && \
-            $(git ls-files --other --directory --exclude-standard | sed q | wc -l | tr -d ' ') != 0 ]]; then
+            $(git ls-files --others --directory --exclude-standard | sed q | wc -l | tr -d ' ') != 0 ]]; then
         hook_com[unstaged]+='%{%F{yellow}%}?%{%f%}'
     fi
 }
