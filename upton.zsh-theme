@@ -32,16 +32,16 @@ setopt prompt_subst
 autoload -Uz vcs_info
 zstyle ':vcs_info:git*' stagedstr '+'
 zstyle ':vcs_info:git*' unstagedstr '*'
-zstyle ':vcs_info:git*' actionformats "%b|%a "
-zstyle ':vcs_info:git*' formats "%b %c%u%m "
+zstyle ':vcs_info:git*' actionformats "%{%F{cyan}%}%b%{%f%}|%{%F{yellow}%}%a%{%f%} "
+zstyle ':vcs_info:git*' formats "%{%F{cyan}%}%b%{%f%} %{%F{green}%}%c%{%f%}%{%F{red}%}%u%{%f%}%{%F{gray}%}%m%{%f%} "
 zstyle ':vcs_info:git*' check-for-changes true
 zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
 zstyle ':vcs_info:*' enable git
 
 +vi-git-untracked() {
     if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' && \
-            $(git ls-files --other --directory --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]]; then
-        hook_com[unstaged]+='?'
+            $(git ls-files --other --directory --exclude-standard | sed q | wc -l | tr -d ' ') != 0 ]]; then
+        hook_com[unstaged]+='%{%F{yellow}%}?%{%f%}'
     fi
 }
 
