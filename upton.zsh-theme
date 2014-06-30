@@ -4,7 +4,7 @@
 # https://github.com/blinks zsh theme
 # http://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/
 
-function prompt_char {
+function prompt_char() {
     git rev-parse --is-inside-work-tree > /dev/null 2>&1 && echo '±' || echo '○'
 }
 
@@ -24,7 +24,7 @@ function prompt_char {
 # %E               - clear till end of line
 # %#               - % if user, # if root
 
-function user_name {
+function user_name() {
 	[[ "$SSH_CONNECTION" != '' ]] && echo '%{%F{yellow}%}%n%{%F{gray}%}@%{%F{blue}%}%m ' || echo ''
 }
 
@@ -38,7 +38,7 @@ zstyle ':vcs_info:git*' check-for-changes true
 zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
 zstyle ':vcs_info:*' enable git
 
-+vi-git-untracked() {
+function +vi-git-untracked() {
     if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' && \
             $(git ls-files --others --directory --exclude-standard | sed q | wc -l | tr -d ' ') != 0 ]]; then
         hook_com[unstaged]+='%{%F{yellow}%}?%{%f%}'
