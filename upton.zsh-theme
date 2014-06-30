@@ -66,7 +66,7 @@ function +vi-git-tagname() {
     local tag
 
     tag=$(git describe --tags --exact-match HEAD 2>/dev/null)
-    [[ -n "$tag" ]] && hook_com[branch]=${tag}
+    [[ -n ${tag} ]] && hook_com[branch]=${tag}
 }
 
 precmd() { vcs_info }
