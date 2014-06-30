@@ -30,12 +30,12 @@ function user_name() {
 
 setopt prompt_subst
 autoload -Uz vcs_info
-zstyle ':vcs_info:git*' stagedstr '+'
-zstyle ':vcs_info:git*' unstagedstr '*'
-zstyle ':vcs_info:git*' actionformats "%{%F{cyan}%}%b%{%f%}|%{%F{yellow}%}%a%{%f%} "
-zstyle ':vcs_info:git*' formats "%{%F{cyan}%}%b%{%f%} %{%F{green}%}%c%{%f%}%{%F{red}%}%u%{%f%}%{%F{gray}%}%m%{%f%} "
+zstyle ':vcs_info:git*' stagedstr '%F{green}+%f'
+zstyle ':vcs_info:git*' unstagedstr '%F{red}*%f'
+zstyle ':vcs_info:git*' actionformats '%F{cyan}%b%f|%F{yellow}%a%f '
+zstyle ':vcs_info:git*' formats '%F{cyan}%b%f %c%u%m '
 zstyle ':vcs_info:git*' check-for-changes true
-zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-tagname
 zstyle ':vcs_info:*' enable git
 
 function +vi-git-untracked() {
@@ -43,6 +43,30 @@ function +vi-git-untracked() {
             $(git ls-files --others --directory --exclude-standard | sed q | wc -l | tr -d ' ') != 0 ]]; then
         hook_com[unstaged]+='%{%F{yellow}%}?%{%f%}'
     fi
+}
+
+function +vi-git-aheadbehind() {
+    local ahead behind
+    local -a gitstatus
+
+    # for git prior to 1.7
+    # ahead=$(git rev-list origin/${hook_com[branch]}..HEAD | wc -l)
+    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l | tr -d ' ')
+    (( $ahead )) && gitstatus+=( "%B%F{magenta}↑${ahead}%f%b" )
+
+    # for git prior to 1.7
+    # behind=$(git rev-list HEAD..origin/${hook_com[branch]} | wc -l)
+    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l | tr -d ' ')
+    (( $behind )) && gitstatus+=( "%F{magenta}↓${behind}%f" )
+
+    hook_com[misc]+=${(j::)gitstatus}
+}
+
+function +vi-git-tagname() {
+    local tag
+
+    tag=$(git describe --exact-match --tags HEAD 2>/dev/null)
+    [[ -n "$tag" ]] && hook_com[branch]=${tag}
 }
 
 precmd() { vcs_info }
