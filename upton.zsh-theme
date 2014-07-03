@@ -18,7 +18,7 @@
 # %(!.$1.$2)       - $1 if root, $2 if normal user
 
 function user_name() {
-	[[ -n "$SSH_CONNECTION" ]] && echo "%F{yellow}%n%f%F{gray}@%f%F{blue}%m%f" || echo ""
+    [[ -n "$SSH_CONNECTION" ]] && echo "%F{yellow}%n%f%F{gray}@%f%F{blue}%m%f" || echo ""
 }
 
 function prompt_char() {
@@ -47,6 +47,7 @@ function +vi-git-aheadbehind() {
     local -a gitstatus
 
     branch_name=${$(git symbolic-ref --short HEAD 2>/dev/null)}
+
     # for git prior to 1.7
     # ahead=$(git rev-list origin/${branch_name}..HEAD | wc -l)
     ahead=$(git rev-list ${branch_name}@{upstream}..HEAD 2>/dev/null | wc -l | tr -d ' ')
@@ -67,11 +68,11 @@ function +vi-git-remotebranch() {
     remote=${$(git rev-parse --verify HEAD@{upstream} --symbolic-full-name 2>/dev/null)/refs\/(remotes|heads)\/}
     branch_name=${$(git symbolic-ref --short HEAD 2>/dev/null)}
 
+    hook_com[branch]="%F{cyan}${hook_com[branch]}%f"
     # The first test will show a tracking branch whenever there is one. The
     # second test, however, will only show the remote branch's name if it
     # differs from the local one.
     #if [[ -n ${remote} ]] ; then
-    hook_com[branch]="%F{cyan}${hook_com[branch]}%f"
     if [[ -n ${remote} && ${remote#*/} != ${branch_name} ]] ; then
         hook_com[branch]+="→%B%F{cyan}${remote}%f%b"
     fi
