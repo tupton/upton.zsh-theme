@@ -2,6 +2,8 @@
 
 First, [make sure oh-my-zsh is installed][omz]. They have great setup instructions.
 
+  [omz]: https://github.com/robbyrussell/oh-my-zsh
+
 Then, clone this repository into the `custom/` directory. I like to put themes in
 `custom/themes/<theme-name>/`.
 
