@@ -14,6 +14,8 @@
 # %m               - short hostname
 # %~               - path (truncated when in home dir)
 # %E               - clear till end of line
+# %(?.$1.$2)       - $1 if exit code was successful, $2 if not
+# %(!.$1.$2)       - $1 if root, $2 if normal user
 
 function user_name() {
 	[[ -n "$SSH_CONNECTION" ]] && echo "%F{yellow}%n%f%F{gray}@%f%F{blue}%m%f " || echo ""
