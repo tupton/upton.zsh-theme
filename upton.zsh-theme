@@ -84,5 +84,5 @@ function +vi-git-tagname() {
 
 precmd() { vcs_info }
 
-PROMPT='$(prompt_char) $(user_name)%f%B%F{green}${PWD/#$HOME/~}%f%b ${vcs_info_msg_0_}%E
+PROMPT='$(prompt_char) $(user_name)%f%B%F{green}%~%f%b ${vcs_info_msg_0_}%E
 %(?.%F{blue}.%F{red})❯%f '
