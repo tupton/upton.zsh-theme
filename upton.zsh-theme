@@ -18,7 +18,7 @@
 # %(!.$1.$2)       - $1 if root, $2 if normal user
 
 function user_name() {
-	[[ -n "$SSH_CONNECTION" ]] && echo "%F{yellow}%n%f%F{gray}@%f%F{blue}%m%f " || echo ""
+	[[ -n "$SSH_CONNECTION" ]] && echo "%F{yellow}%n%f%F{gray}@%f%F{blue}%m%f" || echo ""
 }
 
 function prompt_char() {
@@ -86,5 +86,5 @@ function +vi-git-tagname() {
 
 precmd() { vcs_info }
 
-PROMPT='$(prompt_char) $(user_name)%f%B%F{green}%~%f%b ${vcs_info_msg_0_}%E
+PROMPT='$(prompt_char) $(user_name) %f%B%F{green}%~%f%b ${vcs_info_msg_0_}%E
 %(?.%F{blue}.%F{red})❯%f '
