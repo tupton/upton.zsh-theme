@@ -22,7 +22,7 @@ function user_name() {
 }
 
 function prompt_char() {
-    git rev-parse --is-inside-work-tree > /dev/null 2>&1 && echo "%F{cyan}±%f" || echo "%F{yellow}○%f"
+    git rev-parse > /dev/null 2>&1 && echo "%F{cyan}±%f" || echo "%F{yellow}○%f"
 }
 
 setopt prompt_subst
